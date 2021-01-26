@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     // setting the speed of the car
-    public float speed = 5.0f;
+    public float speed = 7.0f;
     //horizontal movement
     public float Hinput;
     //forward movement
