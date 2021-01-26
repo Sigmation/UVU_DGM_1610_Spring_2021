@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    // setting the speed of the car
+    public float speed = 5.0f;
+    //horizontal movement
+    public float Hinput;
+    //forward movement
+    public float Finput;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +19,9 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(0, 0, 5);
+        Hinput = Input.GetAxis("Horizontal");
+        Finput = Input.GetAxis("Vertical");
+        transform.Translate(Vector3.forward * Time.deltaTime * speed * Finput);
+        transform.Translate(Vector3.right * Time.deltaTime * speed * Hinput);
     }
 }
