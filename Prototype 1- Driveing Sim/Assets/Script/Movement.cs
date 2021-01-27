@@ -5,23 +5,23 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     // setting the speed of the car
-    public float speed = 7.0f;
+    private float Speed = 30.0f;
+    // setting the turn speed of the car
+    private float turnSpeed = 60.0f;
     //horizontal movement
-    public float Hinput;
+    private float Hinput;
     //forward movement
-    public float Finput;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private float Finput;
 
     // Update is called once per frame
     void Update()
     {
+        // gathers the imputs for the controls
         Hinput = Input.GetAxis("Horizontal");
         Finput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * Time.deltaTime * speed * Finput);
-        transform.Translate(Vector3.right * Time.deltaTime * speed * Hinput);
+        // makes the player car go forward and back
+        transform.Translate(Vector3.forward * Time.deltaTime * Speed * Finput);
+        // makes the player car go left and right
+        transform.Rotate(Vector3.up, turnSpeed * Hinput * Time.deltaTime);
     }
 }
