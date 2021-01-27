@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     //calling the car and storing it
-    public GameObject player;
+    public GameObject Player;
     //setting an offset for the camera
     private Vector3 Offset = new Vector3(0, 5, -10);
 
@@ -13,6 +13,6 @@ public class CameraFollow : MonoBehaviour
     void Update()
     {
         //get the camera to follow the car
-        transform.position = player.transform.position + Offset;
+        transform.position = Player.transform.position + Offset;
     }
 }
