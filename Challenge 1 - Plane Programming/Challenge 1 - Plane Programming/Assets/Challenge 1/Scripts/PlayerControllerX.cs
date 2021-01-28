@@ -26,7 +26,7 @@ public class PlayerControllerX : MonoBehaviour
         //if else statment so only if the up or down key is pressed, will the plane rotate
         if (verticalInput != 0)
         {
-            rotationSpeed = 50.0f;
+            rotationSpeed = 100.0f;
         }
         else {
             rotationSpeed = 0.0f;
