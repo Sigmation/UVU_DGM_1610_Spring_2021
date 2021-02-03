@@ -18,7 +18,11 @@ public class PlayerMovement : MonoBehaviour
         if(transform.position.x < -10){
          transform.position = new Vector3(-10, transform.position.y, transform.position.z);
         }
-
+        //setting right peramiters for movment
+        else if (transform.position.x > 10)
+        {
+            transform.position = new Vector3(10, transform.position.y, transform.position.z);
+        }
         //pushing the player on the x axis based on hinput
         transform.Translate(Vector3.right * hInput * Time.deltaTime * speed);
     }
