@@ -5,8 +5,7 @@ using UnityEngine;
 public class MoveForward : MonoBehaviour
 {
     //set the move speed of the sandwich
-    private float speed = 20.0f;
-
+    private float speed = 12.0f;
     // Update is called once per frame
     void Update()
     {
