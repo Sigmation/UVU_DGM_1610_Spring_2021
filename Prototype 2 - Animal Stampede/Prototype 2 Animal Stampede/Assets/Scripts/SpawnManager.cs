@@ -17,19 +17,17 @@ public class SpawnManager : MonoBehaviour
     //Start is called before the first frame update
     void Start()
     {
+        //InvokeRepeating so that SpawmRamdomAnimals keeps happening
         InvokeRepeating("SpawmRamdomAnimals", startDelay, spawnInterval);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
     }
     // SpawmRamdomAnimal is called once per InvokeRepeating in void spawn
     void SpawmRamdomAnimals()
     {
     // Randomly genetate animal spawn position and animal type
     Vector3 spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 0, spawnPosZ);
+    //set the animalindex to equal the leanth of animalPrefabs array
     int animalIndex = Random.Range(0, animalPrefabs.Length);
+    //spawns the animal prefabs at the spawnPos
     Instantiate(animalPrefabs[animalIndex], spawnPos, animalPrefabs[animalIndex].transform.rotation);
     }
 }
