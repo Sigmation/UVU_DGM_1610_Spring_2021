@@ -16,10 +16,10 @@ public class PlayerControllerX : MonoBehaviour
         // On gametime being more then time and on spacebar press, send dog
         if (Time.time > time && Input.GetKeyDown(KeyCode.Space))
         {
-        //summon a dog at player location
-        Instantiate(dogPrefab, transform.position, dogPrefab.transform.rotation);
-        //resets the delay for time
-        time = spawnDelay + Time.time;
+            //summon a dog at player location
+            Instantiate(dogPrefab, transform.position, dogPrefab.transform.rotation);
+            //resets the delay for time
+            time = spawnDelay + Time.time;
         }
     }
 }

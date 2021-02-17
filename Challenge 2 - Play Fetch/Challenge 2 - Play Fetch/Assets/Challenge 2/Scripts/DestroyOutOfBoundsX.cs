@@ -15,16 +15,16 @@ public class DestroyOutOfBoundsX : MonoBehaviour
         // Destroy dogs if x position less than left limit
         if (transform.position.x < leftLimit)
         {
-        // Destroy this object that this script is attached to
-        Destroy(gameObject);
+            // Destroy this object that this script is attached to
+            Destroy(gameObject);
         } 
         // Destroy balls if y position is less than bottomLimit
         else if (transform.position.y < bottomLimit)
         {
-        //display GameOver if ball hits the ground
-        Debug.Log("GAME OVER!");
-        // Destroy this object that this script is attached to
-        Destroy(gameObject);
+            //display GameOver if ball hits the ground
+            Debug.Log("GAME OVER!");
+            // Destroy this object that this script is attached to
+            Destroy(gameObject);
         }
 
     }
