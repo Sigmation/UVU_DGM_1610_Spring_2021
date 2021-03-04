@@ -11,6 +11,8 @@ public class PlayerControllor : MonoBehaviour
     // setting up ground check
     public bool isOnGround = true;
     public bool isGameOver = false;
+    private Animator playerAnim;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,17 +20,19 @@ public class PlayerControllor : MonoBehaviour
         playerRb = GetComponent<Rigidbody>();
         //setting player gravity
         Physics.gravity *= gravityMod;
+        playerAnim = GetComponent<Animator>();
     }
     // Update is called once per frame
     void Update()
     {
         //If space is pressed on ground then jump
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && !isGameOver)
         {
             //makes the player jump
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             //sets on ground to false
             isOnGround = false;
+            playerAnim.SetTrigger("Jump_trig");
         }
     }
     //OnCollisionEnter is called once per collision
@@ -43,6 +47,8 @@ public class PlayerControllor : MonoBehaviour
         {
             isGameOver = true;
             Debug.Log("Game Over!");
+            playerAnim.SetBool("Death_b",true);
+            playerAnim.SetInteger("DeathType_int", 1);
         }
     }
 }
