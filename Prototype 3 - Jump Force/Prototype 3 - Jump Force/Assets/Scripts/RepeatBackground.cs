@@ -21,6 +21,7 @@ public class RepeatBackground : MonoBehaviour
     {
         if(transform.position.x < startPos.x - repeatWidth)
         {
+            //sets the position back to the start position to make a loop effect
             transform.position = startPos;
         }
     }
