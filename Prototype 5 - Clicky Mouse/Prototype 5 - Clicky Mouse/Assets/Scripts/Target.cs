@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Target : MonoBehaviour
 {
     private Rigidbody targeRb;
@@ -40,14 +41,23 @@ public class Target : MonoBehaviour
     }
 
     private void OnMouseDown()
-    {
-        Destroy(gameObject);
-        Instantiate(explotionParticle, transform.position, explotionParticle.transform.rotation);
-        gameManager.UpdateScore(pointValue);
+    { 
+        if (gameManager.isGameActive)
+        {
+            Destroy(gameObject);
+            Instantiate(explotionParticle, transform.position, explotionParticle.transform.rotation);
+            gameManager.UpdateScore(pointValue);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         Destroy(gameObject);
+
+        if(!gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Game Over!");
+            gameManager.GameOver();
+        }
     }
 }
