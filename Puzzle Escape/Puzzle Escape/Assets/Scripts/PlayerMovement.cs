@@ -1,55 +1,71 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private float speed = 5.0f;
-    private float turnSpeed = 500.0f;
-    public float jump = 8;
-    public float gravity = 2;
-   
-    private float hinput;
-    private float finput;
-    private float rinput;
-    private float vinput;
+    private float speed = 5.0f, turnSpeed = 500.0f, jump = 8, gravity = 2, hinput, finput, rinput, vinput;
+
+    public int nextLevel;
 
     public bool isOnGround = true;
     public bool buttonPressed = false;
+    public bool buttonRadias = false;
     public bool doorOpen = false;
+    public bool isAlive = true;
 
     private Rigidbody playerRb;
 
-    public GameObject spawnPoint;
     public GameObject robot;
+    public GameObject smoke;
     public GameObject playerCamera;
+    public GameObject deathCamera;
     public GameObject robotCamera;
+    public GameObject player;
 
+    private Vector3 offset = new Vector3(0, 1, -3);
 
+    public ParticleSystem smokeEffect;
+
+    private GameManager gameManagerScript;
+
+    private Animator playerAnim;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
         //declare player rigidbody
         playerRb = GetComponent<Rigidbody>();
         //set gravity
         Physics.gravity *= gravity;
-       
+        // hide and lock cursor to screen
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
+        playerAnim = player.GetComponent<Animator>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //set himput to horizontal movement
+        // set himput to horizontal movement
         hinput = Input.GetAxis("Horizontal");
-        //set fimput to vertical movement
+        // set fimput to vertical movement
         finput = Input.GetAxis("Vertical");
-        //set rimput to mouse x movement
+        // set rimput to mouse x movement
         rinput = Input.GetAxis("Mouse X");
-        //set vimput to mouse y movement
+        // set vimput to mouse y movement
         vinput = Input.GetAxis("Mouse Y");
+        // Death camera follows the player
+        deathCamera.transform.position = transform.position + offset;
+        // Smoke particle system follows the player
+        smoke.transform.position = transform.position;
         // if Robot control button is not pressed player can move
-        if (buttonPressed == false)
+        if (buttonPressed == false & gameManagerScript.gamePause == false)
         {
             // Swap camera to player camera
             playerCamera.gameObject.SetActive(true);
@@ -60,22 +76,38 @@ public class PlayerMovement : MonoBehaviour
             transform.Translate(Vector3.right * Time.deltaTime * speed * hinput);
             //rotate player with mouse x
             transform.Rotate(Vector3.up * Time.deltaTime * turnSpeed * rinput);
+            // If the player is moving animate walk
+            if (finput >= 1 && isOnGround)
+            {
+                playerAnim.SetInteger("Speed", 1);
+            }
+            else
+            {
+                playerAnim.SetInteger("Speed", 0);
+            }
         }
         // if Robot control button is pressed robot can move
-        if (buttonPressed == true)
+        if (buttonPressed == true & gameManagerScript.gamePause == false)
         {
             // Swap camera to robot camera
             robotCamera.gameObject.SetActive(true);
             playerCamera.gameObject.SetActive(false);
         }
-
+        // If player is close enough to button and clicks active the button
+        if (buttonPressed == false && buttonRadias == true && Input.GetKeyDown(KeyCode.Mouse0) & gameManagerScript.gamePause == false)
+        {
+            Debug.Log("Button Pressed");
+            buttonPressed = true;
+        }
 
         // jump if space pressed and on ground
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && buttonPressed == false)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && buttonPressed == false & gameManagerScript.gamePause == false)
         {
             playerRb.AddForce(Vector3.up * jump, ForceMode.Impulse);
             //set player on ground to false
             isOnGround = false;
+            playerAnim.SetBool("Jump", true);
+            playerAnim.SetInteger("Speed", 0);
         }
     }
     //OnCollisionEnter is called once per collision
@@ -86,27 +118,46 @@ public class PlayerMovement : MonoBehaviour
             //set player on ground to true
             isOnGround = true;
             Debug.Log("Grounded");
+            playerAnim.SetBool("Jump", false);
         }
     }
     // If player touches lava then they respawn
     private void OnTriggerEnter(Collider other)
     {
-        // If player touches lava then they respawn
+        // If player touches lava Then its GameOver and must retry
         if (other.gameObject.CompareTag("Lava") && buttonPressed == false)
         {
-            transform.position = spawnPoint.transform.position;
-            isOnGround = false;
-            Debug.Log("Respawn");
+            gameObject.SetActive(false);
+            deathCamera.gameObject.SetActive(true);
+            gameManagerScript.gameOverText.gameObject.SetActive(true);
+            gameManagerScript.retryButton.gameObject.SetActive(true);
+            smokeEffect.Play();
+            Debug.Log("Burned");
+            Cursor.visible = true;
+            isAlive = false;
+            Physics.gravity /= gravity;
         }
-        
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && other.gameObject.CompareTag("Button") && buttonPressed == false && doorOpen == false)
+        // Got to next level
+        if (other.gameObject.CompareTag("Exit"))
         {
-            buttonPressed = true;
-            Debug.Log("Button Pressed");
+            Physics.gravity /= gravity;
+            SceneManager.LoadScene(nextLevel);
+        }
+            // Activate button
+            if (other.gameObject.CompareTag("Button"))
+        {
+            Debug.Log("Within Button radias");
+            buttonRadias = true;
         }
     }
+    // If Player leave button area disable button
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Button"))
+        {
+            Debug.Log("Not Within Button radias");
+            buttonRadias = false;
+        }
+    }
+    
 }

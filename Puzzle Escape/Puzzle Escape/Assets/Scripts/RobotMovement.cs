@@ -15,6 +15,7 @@ public class RobotMovement : MonoBehaviour
     private float vinput;
 
     private PlayerMovement playerMovementScript;
+    private GameManager gameManagerScript;
 
     public bool isOnGround = true;
     private Rigidbody robotRb;
@@ -22,18 +23,22 @@ public class RobotMovement : MonoBehaviour
     public GameObject spawnPoint;
     public GameObject door;
     public GameObject button;
+    public GameObject robot;
 
     private Animator doorAnim;
     private Animator buttonAnim;
+    private Animator robotAnim;
 
     // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
         //declare robot rigidbody
         robotRb = GetComponent<Rigidbody>();
         doorAnim = door.GetComponent<Animator>();
         buttonAnim = button.GetComponent<Animator>();
+        robotAnim = robot.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -48,7 +53,7 @@ public class RobotMovement : MonoBehaviour
         //set vimput to mouse y movement
         vinput = Input.GetAxis("Mouse Y");
 
-        if (playerMovementScript.buttonPressed == true)
+        if (playerMovementScript.buttonPressed == true && gameManagerScript.gamePause == false)
         {
             //move forwad and back with Vertical movment
             transform.Translate(Vector3.forward * Time.deltaTime * speed * finput);
@@ -56,23 +61,35 @@ public class RobotMovement : MonoBehaviour
             transform.Translate(Vector3.right * Time.deltaTime * speed * hinput);
             //rotate player with mouse x
             transform.Rotate(Vector3.up * Time.deltaTime * turnSpeed * rinput);
+            // If Robot is moveing animate walk
+            if (finput >= 1 && isOnGround)
+            {
+                robotAnim.SetInteger("Speed", 1);
+            }
+            else
+            {
+                robotAnim.SetInteger("Speed", 0);
+            }
         }
         // jump if space pressed and on ground but for robot
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && playerMovementScript.buttonPressed == true)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && playerMovementScript.buttonPressed == true && gameManagerScript.gamePause == false)
         {
             robotRb.AddForce(Vector3.up * jump, ForceMode.Impulse);
             //set robot on ground to false
             isOnGround = false;
+            robotAnim.SetBool("Jumping", true);
+            robotAnim.SetInteger("Speed", 0);
         }
     }
     //OnCollisionEnter is called once per collision
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground") && playerMovementScript.buttonPressed == true)
+        if (collision.gameObject.CompareTag("Ground"))
         {
             //set robot on ground to true
             isOnGround = true;
             Debug.Log("Grounded");
+            robotAnim.SetBool("Jumping", false);
         }
         // If robot touches button open the door
         if (collision.gameObject.CompareTag("Button"))
@@ -91,7 +108,7 @@ public class RobotMovement : MonoBehaviour
         if (other.gameObject.CompareTag("Lava"))
         {
             transform.position = spawnPoint.transform.position;
-            isOnGround = false;
+            playerMovementScript.buttonPressed = false;
             Debug.Log("Respawn");
         }
     }

@@ -7,6 +7,8 @@ TagManager:
   - Ground
   - Lava
   - Button
+  - enemy
+  - Exit
   layers:
   - Default
   - TransparentFX
