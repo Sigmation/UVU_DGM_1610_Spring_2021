@@ -34,6 +34,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Animator playerAnim;
 
+    public AudioClip jumpSound;
+    public AudioClip controlPanleSound;
+    private AudioSource playerAudio;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         playerAnim = player.GetComponent<Animator>();
+        playerAudio = GetComponent<AudioSource>();
 
     }
 
@@ -81,6 +86,18 @@ public class PlayerMovement : MonoBehaviour
             {
                 playerAnim.SetInteger("Speed", 1);
             }
+            else if (finput < 0 && isOnGround)
+            {
+                playerAnim.SetInteger("Speed", 1);
+            }
+            else if (hinput >= 1 && isOnGround)
+            {
+                playerAnim.SetInteger("Speed", 1);
+            }
+            else if (hinput < 0 && isOnGround)
+            {
+                playerAnim.SetInteger("Speed", 1);
+            }
             else
             {
                 playerAnim.SetInteger("Speed", 0);
@@ -94,10 +111,12 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.gameObject.SetActive(false);
         }
         // If player is close enough to button and clicks active the button
-        if (buttonPressed == false && buttonRadias == true && Input.GetKeyDown(KeyCode.Mouse0) & gameManagerScript.gamePause == false)
+        if (buttonPressed == false && doorOpen == false && buttonRadias == true && Input.GetKeyDown(KeyCode.Mouse0) & gameManagerScript.gamePause == false)
         {
             Debug.Log("Button Pressed");
             buttonPressed = true;
+            playerAnim.SetInteger("Speed", 0);
+            playerAudio.PlayOneShot(controlPanleSound);
         }
 
         // jump if space pressed and on ground
@@ -108,6 +127,8 @@ public class PlayerMovement : MonoBehaviour
             isOnGround = false;
             playerAnim.SetBool("Jump", true);
             playerAnim.SetInteger("Speed", 0);
+            // Play Jump Sound
+            playerAudio.PlayOneShot(jumpSound);
         }
     }
     //OnCollisionEnter is called once per collision
@@ -131,6 +152,7 @@ public class PlayerMovement : MonoBehaviour
             deathCamera.gameObject.SetActive(true);
             gameManagerScript.gameOverText.gameObject.SetActive(true);
             gameManagerScript.retryButton.gameObject.SetActive(true);
+            gameManagerScript.gameAudio.PlayOneShot(gameManagerScript.lavaDeathSound);
             smokeEffect.Play();
             Debug.Log("Burned");
             Cursor.visible = true;
@@ -143,8 +165,8 @@ public class PlayerMovement : MonoBehaviour
             Physics.gravity /= gravity;
             SceneManager.LoadScene(nextLevel);
         }
-            // Activate button
-            if (other.gameObject.CompareTag("Button"))
+        // if player enters button area activate button
+        if (other.gameObject.CompareTag("Button"))
         {
             Debug.Log("Within Button radias");
             buttonRadias = true;

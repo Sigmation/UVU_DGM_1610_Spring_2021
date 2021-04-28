@@ -22,10 +22,16 @@ public class GameManager : MonoBehaviour
 
     private PlayerMovement playerMovementScript;
 
+    public AudioClip lavaDeathSound;
+    public AudioClip completedSound;
+    public AudioClip doorOpenSound;
+    public AudioSource gameAudio;
+
     // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        gameAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame

@@ -66,6 +66,18 @@ public class RobotMovement : MonoBehaviour
             {
                 robotAnim.SetInteger("Speed", 1);
             }
+            else if (finput < 0 && isOnGround)
+            {
+                robotAnim.SetInteger("Speed", 1);
+            }
+            else if (hinput >= 1 && isOnGround)
+            {
+                robotAnim.SetInteger("Speed", 1);
+            }
+            else if (hinput < 0 && isOnGround)
+            {
+                robotAnim.SetInteger("Speed", 1);
+            }
             else
             {
                 robotAnim.SetInteger("Speed", 0);
@@ -92,12 +104,14 @@ public class RobotMovement : MonoBehaviour
             robotAnim.SetBool("Jumping", false);
         }
         // If robot touches button open the door
-        if (collision.gameObject.CompareTag("Button"))
+        if (collision.gameObject.CompareTag("Button") && playerMovementScript.doorOpen == false)
         {
+            gameManagerScript.gameAudio.PlayOneShot(gameManagerScript.completedSound);
             playerMovementScript.buttonPressed = false;
             playerMovementScript.doorOpen = true;
             buttonAnim.SetBool("robotOnButton", true);
             doorAnim.SetBool("doorIsOpen", true);
+            gameManagerScript.gameAudio.PlayOneShot(gameManagerScript.doorOpenSound);
             Debug.Log("RobotButton");
         }
     }
