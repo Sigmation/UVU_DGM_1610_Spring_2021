@@ -16,6 +16,7 @@ public class TitleScreen : MonoBehaviour
     {
         playButton.onClick.AddListener(PlayGame);
         quitButton.onClick.AddListener(QuitGame);
+        Cursor.visible = true;
     }
     
     // Start game
