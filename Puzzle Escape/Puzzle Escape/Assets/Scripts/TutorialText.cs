@@ -6,18 +6,15 @@ using UnityEngine.UI;
 
 public class TutorialText : MonoBehaviour
 {
-
     public TextMeshProUGUI tutorialText;
     private PlayerMovement playerMovementScript;
     private GameManager gameManagerScript;
-
     // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
         gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
-
     // Update is called once per frame
     void Update()
     {

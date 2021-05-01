@@ -4,62 +4,44 @@ using UnityEngine;
 
 public class RobotMovement : MonoBehaviour
 {
-    private float speed = 5.0f;
-    private float turnSpeed = 500.0f;
-    public float jump = 8;
-    public float gravity = 2;
-
-    private float hinput;
-    private float finput;
-    private float rinput;
-    private float vinput;
-
+    private int playerHealth = 4;
+    private float speed = 5.0f, turnSpeed = 500.0f, jump = 8, gravity = 2, hinput, finput, rinput, vinput;
     private PlayerMovement playerMovementScript;
     private GameManager gameManagerScript;
-
     public bool isOnGround = true;
     private Rigidbody robotRb;
-
-    public GameObject spawnPoint;
-    public GameObject door;
-    public GameObject button;
-    public GameObject robot;
-
-    private Animator doorAnim;
-    private Animator buttonAnim;
-    private Animator robotAnim;
-
+    public GameObject spawnPoint, door, button, robot;
+    private Animator doorAnim, buttonAnim, robotAnim;
+    public ParticleSystem shockEffect;
     // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
         gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
-        //declare robot rigidbody
+        // Declare robot rigidbody
         robotRb = GetComponent<Rigidbody>();
         doorAnim = door.GetComponent<Animator>();
         buttonAnim = button.GetComponent<Animator>();
         robotAnim = robot.GetComponent<Animator>();
     }
-
     // Update is called once per frame
     void Update()
     {
-        //set himput to horizontal movement
+        // Set himput to horizontal movement
         hinput = Input.GetAxis("Horizontal");
-        //set fimput to vertical movement
+        // Set fimput to vertical movement
         finput = Input.GetAxis("Vertical");
-        //set rimput to mouse x movement
+        // Set rimput to mouse x movement
         rinput = Input.GetAxis("Mouse X");
-        //set vimput to mouse y movement
+        // Set vimput to mouse y movement
         vinput = Input.GetAxis("Mouse Y");
-
         if (playerMovementScript.buttonPressed == true && gameManagerScript.gamePause == false)
         {
-            //move forwad and back with Vertical movment
+            // Move forwad and back with Vertical movment
             transform.Translate(Vector3.forward * Time.deltaTime * speed * finput);
-            //move left and right with Horizontal movment
+            // Move left and right with Horizontal movment
             transform.Translate(Vector3.right * Time.deltaTime * speed * hinput);
-            //rotate player with mouse x
+            // Rotate player with mouse x
             transform.Rotate(Vector3.up * Time.deltaTime * turnSpeed * rinput);
             // If Robot is moveing animate walk
             if (finput >= 1 && isOnGround)
@@ -83,22 +65,21 @@ public class RobotMovement : MonoBehaviour
                 robotAnim.SetInteger("Speed", 0);
             }
         }
-        // jump if space pressed and on ground but for robot
+        // Jump if space pressed and on ground but for robot
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true && playerMovementScript.buttonPressed == true && gameManagerScript.gamePause == false)
         {
             robotRb.AddForce(Vector3.up * jump, ForceMode.Impulse);
-            //set robot on ground to false
+            // Set robot on ground to false
             isOnGround = false;
             robotAnim.SetBool("Jumping", true);
             robotAnim.SetInteger("Speed", 0);
         }
     }
-    //OnCollisionEnter is called once per collision
+    // If Robot touches the ground set robot isOnGround to true
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            //set robot on ground to true
             isOnGround = true;
             Debug.Log("Grounded");
             robotAnim.SetBool("Jumping", false);
@@ -115,12 +96,16 @@ public class RobotMovement : MonoBehaviour
             Debug.Log("RobotButton");
         }
     }
-    // If robot touches lava then they respawn
+    // If robot touches lava then they respawn and damage the player
     private void OnTriggerEnter(Collider other)
     {
         // If player touches lava then they respawn
         if (other.gameObject.CompareTag("Lava"))
         {
+            shockEffect.Play();
+            playerMovementScript.playerAudio.PlayOneShot(playerMovementScript.shock);
+            playerHealth -= 1;
+            playerMovementScript.HealthBar(playerHealth);
             transform.position = spawnPoint.transform.position;
             playerMovementScript.buttonPressed = false;
             Debug.Log("Respawn");

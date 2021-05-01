@@ -8,32 +8,20 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public int currentLevel;
-
     public bool gamePause = false;
     private bool retry = true;
-
-    public GameObject pause;
-    public GameObject player;
-
-    public TextMeshProUGUI gameOverText;
-    public TextMeshProUGUI pauseText;
-
+    public GameObject pause, player;
+    public TextMeshProUGUI gameOverText, pauseText;
     public Button retryButton;
-
     private PlayerMovement playerMovementScript;
-
-    public AudioClip lavaDeathSound;
-    public AudioClip completedSound;
-    public AudioClip doorOpenSound;
+    public AudioClip lavaDeathSound, completedSound, doorOpenSound;
     public AudioSource gameAudio;
-
     // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
         gameAudio = GetComponent<AudioSource>();
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -52,7 +40,7 @@ public class GameManager : MonoBehaviour
             playerMovementScript.buttonPressed = false;
             Cursor.visible = true;
         }
-        //Unpause Game
+        // Unpause Game
         else if (Input.GetKeyDown(KeyCode.Escape) && gamePause == true)
         {
             gamePause = false;
@@ -62,7 +50,7 @@ public class GameManager : MonoBehaviour
             Cursor.visible = false;
         }
     }
-    //Resets the player
+    // Resets the player
     public void RetryGame()
     {
         // Prevent the game from loading multiple scenes
